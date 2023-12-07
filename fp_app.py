@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import math
 import sklearn
 import pickle
 import numpy as np
@@ -66,6 +67,7 @@ user_encoded_df = encode_dummy_df.tail(1)
 if ml_model == "Decision Tree":
     # Using DT to predict() with encoded user data
     new_prediction_dt = dt_model.predict(user_encoded_df)
+    #new_prediction_dt = math.floor(new_prediction_dt)
     # Show the predicted cost range on the app
     st.write("Decision Tree AQI Prediction: {}".format(*new_prediction_dt))
     # showing additional feature importance plot
