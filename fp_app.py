@@ -27,29 +27,36 @@ rf_pickle.close()
 aqi = pd.read_csv('mlm_aqi_data.csv')
 
 # User input form
-state = st.selectbox(aqi['State'].unique().tolist())
+state = st.selectbox("Select state", options = aqi['State'].unique().tolist())
 filter_by_state = aqi[aqi['State'] == state]
+
 with st.form("user_inputs"):
-    county = st.selectbox(filter_by_state['County'].unique().tolist())
-    CO_perc = st.number_input("Percentage of CO", min_value=0, max_value=1, value=0.1)
-    NO2_perc = st.number_input("Percentage of NO2", min_value=0, max_value=1, value=0.1)
-    PM25_perc = st.number_input("Percentage of PM2.5", min_value=0, max_value=1, value=0.1)
-    PM10_perc = st.number_input("Percentage of PM10", min_value=0, max_value=1, value=0.1)
-    O3_perc = st.number_input("Percentage of 3O", min_value=0, max_value=1, value=0.1)
+    county = st.selectbox("Select county", options = filter_by_state['County'].unique().tolist())
+    CO_perc = st.number_input("Percentage of CO", min_value=0.0, max_value=1.0, value=0.1, step=0.01)
+    NO2_perc = st.number_input("Percentage of NO2", min_value=0.0, max_value=1.0, value=0.1, step=0.01)
+    PM25_perc = st.number_input("Percentage of PM2.5", min_value=0.0, max_value=1.0, value=0.1, step=0.01)
+    PM10_perc = st.number_input("Percentage of PM10", min_value=0.0, max_value=1.0, value=0.1, step=0.01)
+    O3_perc = st.number_input("Percentage of O3", min_value=0.0, max_value=1.0, value=0.1, step=0.01)
     ml_model = st.selectbox("Select model",
                             options = ["Decision Tree", "Random Forest", "AdaBoost"],
                             placeholder = 'Choose an option')
-    
     st.form_submit_button()
 
 #Return row in original data to get demographics
 user_df = aqi.loc[aqi["State"].isin([state]) & aqi['County'].isin([county])]
 #Replace values with input values
+user_df.loc[user_df['CO_perc']!= CO_perc, 'CO_perc'] = CO_perc
+user_df.loc[user_df['NO2_perc']!= NO2_perc, 'NO2_perc'] = NO2_perc
+user_df.loc[user_df['O3_perc']!= O3_perc, 'O3_perc'] = O3_perc
+user_df.loc[user_df['PM2.5_perc']!= PM25_perc, 'PM2.5_perc'] = PM25_perc
+user_df.loc[user_df['PM10_perc']!= PM10_perc, 'PM10_perc'] = PM10_perc
+
+st.dataframe(user_df)
 
 encode_df = aqi.copy()
 # Combine the list of user data as a row to default_df
 encode_df = pd.concat([encode_df, user_df])
-encode_df = encode_df.drop(['AQI'])
+encode_df = encode_df.drop(columns=['AQI'])
 # Create dummies for encode_df
 cat_var = ["State", "County"]
 encode_dummy_df = pd.get_dummies(encode_df, columns = cat_var)
