@@ -9,29 +9,49 @@ import pydeck as pdk
 import warnings
 warnings.filterwarnings('ignore')
 
-aqi2 =pd.read_csv('aqi2.csv')
 
-us_initial_view = pdk.ViewState(
-    latitude = 37.0902,
-    longitude = -95.7129,
-    zoom = 11,
-    pitch = 30
-    )
+#insert introduction to research question
+st.title("The Anthropogenic Effects on Air Quality")
+st.subheader("What human qualities can impact air quality the most?")
+st.write("The Air Quality Index (AQI) is a numerical scale that communicates the "
+         "level of air pollution in a specific area, assessing the concentration of "
+         "pollutants such as particulate matter (PM2.5 and PM10), ground-level "
+         "ozone, carbon monoxide, sulfur dioxide, and nitrogen dioxide. The AQI " 
+         "provides a standardized way to convey the potential health impacts associated "
+         "with different pollution levels, ranging from Good to Hazardous. Human "
+         "activities significantly contribute to air quality degradation through "
+         "the release of pollutants from sources like vehicle emissions, industrial processes"
+         " and burning of fossil fuels. Exposure to poor air quality can have severe health "
+         "implications, causing respiratory and cardiovascular problems, exacerbating pre-existing "
+         "conditions, and even leading to premature death. Therefore, understanding and addressing human "
+         "impacts on air quality are crucial for safeguarding public health and the environment.")
+st.image("heatmap_aqi.png")
 
-heat_layer = pdk.Layer(
-    "HeatmapLayer",
-    data=aqi2,
-    opacity=0.9,
-    get_position=["Latitude", "Longitude"],
-    threshold=1,
-    get_weight="AQI"
-)
+#heat maps from exploratory data analysis
+st.subheader("Pollutant Parameter Distributions")
+tab1, tab2, tab3 = st.tabs(["Ozone", "PM10", "PM2.5"])
+with tab1:
+    st.image('heatmap_ozone.png')
+with tab2:
+    st.image('heatmap_pm10.png')
+with tab3:
+    st.image('heatmap_pm25.png')
+        
+st.subheader("Demographic Distributions")
+tab1, tab2, tab3, tab4 = st.tabs(["Black Population Percentages", "Hispanic Population Percentages", 
+                            "Urban Population Percentages", "Average Salary"])
+with tab1:
+    st.image('heatmap_black.png')
+with tab2:
+    st.image('heatmap_his.png')
+with tab3:
+    st.image('heatmap_urban.png')
+with tab4:
+    st.image('heatmap_salary.png')
 
-st.pydeck_chart(pdk.Deck(
-    map_style = 'mapbox://styles/mapbox/light-v9',
-    initial_view_state = us_initial_view, # base map
-    layers = [heat_layer] # select the layer to display
-    ))
+st.subheader("Utilize our advanced machine learning app to predict"
+             " air quality index.")
+
 
 # Reading the pickle files that we created before 
 # Decision Tree
