@@ -5,8 +5,33 @@ import sklearn
 import pickle
 import numpy as np
 from matplotlib import pyplot as plt
+import pydeck as pdk
 import warnings
 warnings.filterwarnings('ignore')
+
+aqi2 =pd.read_csv('aqi2.csv')
+
+us_initial_view = pdk.ViewState(
+    latitude = 37.0902,
+    longitude = -95.7129,
+    zoom = 11,
+    pitch = 30
+    )
+
+heat_layer = pdk.Layer(
+    "HeatmapLayer",
+    data=aqi2,
+    opacity=0.9,
+    get_position=["Latitude", "Longitude"],
+    threshold=1,
+    get_weight="AQI"
+)
+
+st.pydeck_chart(pdk.Deck(
+    map_style = 'mapbox://styles/mapbox/light-v9',
+    initial_view_state = us_initial_view, # base map
+    layers = [heat_layer] # select the layer to display
+    ))
 
 # Reading the pickle files that we created before 
 # Decision Tree
